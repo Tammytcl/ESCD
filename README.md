@@ -33,7 +33,9 @@ for objective dispatch and the adaptations of comparison methods.
 
 ## Results
 
-<p align="center"><img src="assets/table1.png" width="100%" alt="Table 1 from the ESCD report"></p>
+<p align="center"><a href="assets/table1.pdf"><img src="assets/table1.svg" width="100%" alt="Table 1 from the ESCD report"></a></p>
+
+<p align="center"><a href="assets/table1.pdf">Vector PDF</a> · <a href="assets/table1.png">High-resolution PNG</a></p>
 
 These are **paper-reported results**, not new results from release checks.
 The student is Qwen3.5-2B, with Qwen3-32B and GLM-Z1-9B-0414 teachers.
