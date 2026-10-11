@@ -1,0 +1,21 @@
+[project]
+name = "escd"
+version = "0.1.0"
+description = "Event-Set Completion Distillation: cross-tokenizer on-policy training"
+requires-python = ">=3.10"
+dependencies = ["PyYAML>=6.0"]
+
+[project.entry-points."sglang.srt.plugins"]
+opd_bpm_binary_hidden = "opd.cross_tokenizer.sglang_binary_hidden:register_sglang_plugin"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["opd*"]
+exclude = ["tests*", "slime*", "third_party*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["slime", "."]
+testpaths = ["tests"]

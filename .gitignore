@@ -1,0 +1,17 @@
+outputs/
+logs/
+wandb/
+checkpoints/
+data/
+configs/local/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+.env
+.env.*
+*.log
+*.pt
+*.safetensors

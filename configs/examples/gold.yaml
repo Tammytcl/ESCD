@@ -1,0 +1,86 @@
+# Table 1 training template. Set local model, data and output paths.
+schema_version: 1
+run:
+  name: gold-qwen3-to-qwen35
+  model_config: qwen3.5-2B
+  teacher_model_config: qwen3-32B
+  teacher_backend: sglang
+  teacher_model_path: /models/Qwen3-32B
+  model_path: /models/Qwen3.5-2B
+  load_path: /models/Qwen3.5-2B
+  ref_load: /models/Qwen3.5-2B
+  save_dir: /outputs/checkpoints/gold
+  save_interval: 50
+data:
+  path: /data/train.jsonl
+  input_key: prompt
+  label_key: label
+  metadata_key: metadata
+  apply_chat_template: true
+  apply_chat_template_kwargs:
+    enable_thinking: true
+reward:
+  custom_rm_path: opd.cross_tokenizer.sglang_teacher.external_causal_hidden_reward
+  post_process_path: opd.cross_tokenizer.sglang_teacher.install_external_causal_hidden_payload
+  key: task_reward
+loss:
+  opd_loss_type: sampled
+  opd_top_k: 20
+  opd_kl_coef: 1.0
+  normalize_by_loss_tokens: true
+  use_teacher_student_logprob_clip: false
+cross_tokenizer:
+  enabled: true
+  algorithm: gold
+  algorithm_kwargs:
+    token_merge_strategy: observed
+    beta: 0.0
+    student_temperature: 1.0
+    teacher_temperature: 1.0
+    distillation_weight: 1.0
+    crossentropy_weight: 0.0
+    matched_weight: 1.0
+    unmatched_weight: 1.0
+    skip_student_eos: false
+    skip_teacher_eos: false
+    dense_row_chunk_size: 2
+  teacher_tokenizer: /models/Qwen3-32B
+  candidate_top_k: 0
+  temperature: 1.0
+  alignment_error_policy: skip
+sampling:
+  num_rollout: 2500
+  rollout_batch_size: 16
+  samples_per_prompt: 1
+  global_batch_size: 16
+  max_prompt_len: 5120
+  max_response_len: 27648
+  temperature: 1.0
+  top_p: 0.95
+  top_k: 20
+evaluation:
+  mode: disabled
+parallel:
+  actor_num_nodes: 4
+  actor_num_gpus_per_node: 8
+  rollout_num_gpus: 16
+  rollout_num_gpus_per_engine: 4
+  tensor_parallel_size: 2
+  pipeline_parallel_size: 2
+  context_parallel_size: 8
+  micro_batch_size: 1
+  distributed_timeout_minutes: 60
+  sequence_length: 33280
+  qkv_format: bshd
+  recompute_loss_function: false
+optimizer:
+  learning_rate: 5.0e-07
+  weight_decay: 0.1
+sglang:
+  max_running_requests: 16
+  chunked_prefill_size: 4096
+  disable_cuda_graph: false
+  memory_fraction_static: 0.75
+logging:
+  enable_wandb: false
+  project: cross-tokenizer-opd

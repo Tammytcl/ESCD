@@ -1,0 +1,13 @@
+hydra-core
+tensordict
+numpy
+pybind11
+codetiming
+torchdata
+datasets
+peft
+fastapi==0.119.0
+wandb
+ray[default]
+yapf
+PyYAML>=6.0
