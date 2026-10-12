@@ -8,6 +8,7 @@ Shanghai Jiao Tong University · EPIC Lab · The University of Hong Kong · Fuda
 [![Latest PDF](https://img.shields.io/badge/Report-Latest_PDF-315B78.svg)](ESCD.pdf)
 [![SciDeriv](https://img.shields.io/badge/Dataset-SciDeriv-E9B949.svg)](https://huggingface.co/datasets/mytcl/SciDeriv)
 [![PHYRD-40](https://img.shields.io/badge/Dataset-PHYRD--40-E9B949.svg)](https://huggingface.co/datasets/mytcl/PHYRD-40)
+[![GitHub Stars](https://img.shields.io/github/stars/Tammytcl/ESCD?style=flat&label=Stars)](https://github.com/Tammytcl/ESCD/stargazers)
 
 The [arXiv paper](https://arxiv.org/abs/2609.34738) is an earlier version.
 Please refer to the [latest PDF](ESCD.pdf) for the updated technical report.
@@ -220,6 +221,13 @@ python -m unittest discover -s tests -v
 
 Numerical checks and command dry-runs do not establish GPU compatibility,
 distributed correctness or benchmark reproduction.
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Tammytcl/ESCD&type=Date)](https://www.star-history.com/#Tammytcl/ESCD&Date)
+
+[View stargazers](https://github.com/Tammytcl/ESCD/stargazers) ·
+[Explore interactive history](https://www.star-history.com/#Tammytcl/ESCD&Date)
 
 ## Acknowledgments and citation
 
