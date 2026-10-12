@@ -15,7 +15,19 @@ Please refer to the [latest PDF](ESCD.pdf) for the updated technical report.
 **ESCD supervises completion of teacher events, without prescribing a probability
 split among valid student-token completions.** This release contains the training
 implementation and portable recipes for Table 1: **ESCD, BPM, SimCT, GOLD and
-X-Token**. It excludes agentic training and the internal cluster/evaluation platform.
+X-Token**, plus a standalone **PHYRD-40 rubric evaluation workflow**. Large-scale
+training recipes, agentic training, and the internal cluster/evaluation platform
+are not included.
+
+## Release coverage
+
+| Component | Public release |
+| --- | --- |
+| Small-scale cross-tokenizer OPD | ESCD + BPM/SimCT/GOLD/X-Token implementations and recipes |
+| Large-scale SFT/MoE training | Training recipes and checkpoints not included |
+| Large-scale training data | [SciDeriv: 17,577 prompts](https://huggingface.co/datasets/mytcl/SciDeriv) |
+| Physics evaluation data | [PHYRD-40: 40 problems, solutions and rubrics](https://huggingface.co/datasets/mytcl/PHYRD-40) |
+| PHYRD-40 evaluation | [Portable generation, third-party API rubric grading and score aggregation](docs/phyrd40-evaluation.md) |
 
 ## Method
 
@@ -53,11 +65,42 @@ Mathematics uses avg@8/pass@8; code uses avg@2/pass@2. See
 We reference the original BPM mixture instead of renaming it. SciDeriv and PHYRD-40
 include JSONL, Parquet, data cards and the report. PHYRD-40 solutions and rubrics
 are for grading only. Large-scale SFT/MoE recipes and the private evaluation
-platform are outside this Table 1 training release.
+platform are not included; the independent public grader is provided below.
 
 ```bash
 hf download K1zE/BPM --repo-type dataset mix-20k.jsonl --local-dir data/bpm
+hf download mytcl/SciDeriv --repo-type dataset data/train.jsonl --local-dir data/scideriv
 ```
+
+## PHYRD-40 rubric evaluation
+
+The evaluation tools use Python 3.10+ and the standard library. Prepare the
+public data, provide one candidate response per problem, and grade through your
+own OpenAI-compatible judge API:
+
+```bash
+python -m evaluation.phyrd40.prepare --output-dir data/phyrd40
+mkdir -p configs/local
+cp configs/examples/phyrd40_judge.json configs/local/judge.json
+export JUDGE_BASE_URL='https://your-judge-provider.example/v1'
+export JUDGE_MODEL='your-versioned-judge-model'
+read -rsp 'Judge API key: ' JUDGE_API_KEY; echo
+export JUDGE_API_KEY
+# Supply outputs/phyrd40/predictions.jsonl with {"id": "A001", "response": "..."} rows.
+python -m evaluation.phyrd40.rubric_judge \
+  --problems data/phyrd40/problems.jsonl \
+  --predictions outputs/phyrd40/predictions.jsonl \
+  --judge-config configs/local/judge.json \
+  --output-dir outputs/phyrd40/judge
+```
+
+Replace the placeholder API address and model with your provider's values.
+Credentials are read from the environment. The grader validates scores and
+rubric breakdowns, supports Chat Completions/Responses with JSON-schema fallback,
+and resumes completed judgments. **`summary.json` → `mean_score`** is the primary
+PHYRD-40 metric; threshold-based pass rate is auxiliary. See the
+[complete evaluation guide](docs/phyrd40-evaluation.md) for optional generation,
+configuration and a two-item format check.
 
 ## Installation
 
@@ -162,9 +205,10 @@ not a direct `iter_*` path.
 ```text
 opd/cross_tokenizer/   ESCD and Table 1 objectives
 slime/                adapted distributed backend and model adapters
-configs/examples/     five methods × two teachers
+configs/examples/     five methods × two teachers; evaluation API examples
 scripts/training/     YAML compiler and teacher/Ray/student launchers
-tests/                CPU numerical contracts
+evaluation/phyrd40/   independent generation and rubric scoring
+tests/                CPU numerical contracts and mock API evaluation tests
 docs/                 method adaptations and reproduction scope
 assets/               figures from the report
 ESCD.pdf              latest technical report

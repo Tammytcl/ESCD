@@ -1,0 +1,13 @@
+{
+  "base_url_env": "MODEL_BASE_URL",
+  "api_key_env": "MODEL_API_KEY",
+  "model_env": "MODEL_NAME",
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "max_output_tokens": 256000,
+  "token_limit_field": "max_tokens",
+  "extra_body": {},
+  "concurrency": 2,
+  "timeout_seconds": 172800,
+  "max_retries": 3
+}

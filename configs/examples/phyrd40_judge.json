@@ -1,0 +1,13 @@
+{
+  "base_url_env": "JUDGE_BASE_URL",
+  "api_key_env": "JUDGE_API_KEY",
+  "model_env": "JUDGE_MODEL",
+  "api_mode": "chat_completions",
+  "schema_mode": "strict",
+  "reasoning_effort": null,
+  "max_output_tokens": null,
+  "concurrency": 4,
+  "timeout_seconds": 1800,
+  "max_retries": 5,
+  "pass_score": 70
+}

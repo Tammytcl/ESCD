@@ -1,8 +1,9 @@
 # Reproduction scope
 
-This release contains Table 1 cross-tokenizer training. Agentic experiments,
-Open-MOPD, DLC submitters, the internal evaluation platform, model weights and
-historical logs are not included.
+This release contains Table 1 cross-tokenizer training and the
+[portable PHYRD-40 evaluation workflow](phyrd40-evaluation.md). Large-scale
+SFT/MoE training recipes, agentic experiments, Open-MOPD, cluster submitters,
+the internal evaluation platform, model weights and historical logs are not included.
 
 The Qwen templates originate from commit
 `695cebfed68f5ffea5485fff4e8fa766229e9dc9`. Its BPM and SimCT save interval was 100,
@@ -24,7 +25,8 @@ Runtime requirements:
 - Teacher context defaults to 65,536 because tokenizer lengths can differ; the
   student recipe remains 5,120 prompt / 27,648 response / 33,280 sequence tokens.
 - Evaluation is disabled in portable training; export and evaluate checkpoints
-  independently. No best-checkpoint selector is bundled.
+  independently. PHYRD-40 generation and rubric grading are available as a
+  separate workflow; no best-checkpoint selector is bundled.
 - Install the adapted Slime and registered SGLang plugin on relevant nodes.
   Dependency files do not lock the full CUDA, kernel, Megatron or driver stack.
 

@@ -188,12 +188,14 @@ def _completion_token_param(model: str) -> str:
 
 
 async def _call_llm_judge(prompt: str) -> dict[str, Any]:
-    api_base = os.getenv("JUDGE_API_BASE") or os.getenv("DMX_API_BASE", "https://www.dmxapi.cn/v1")
-    api_key = os.getenv("JUDGE_API_KEY") or os.getenv("DMX_API_KEY") or os.getenv("OPENAI_API_KEY")
+    api_base = os.getenv("JUDGE_BASE_URL") or os.getenv("JUDGE_API_BASE")
+    api_key = os.getenv("JUDGE_API_KEY")
+    model = os.getenv("JUDGE_MODEL")
+    if not api_base or not model:
+        raise RuntimeError("Set JUDGE_BASE_URL and JUDGE_MODEL for your own judge provider.")
     if not api_key:
-        raise RuntimeError("Missing judge API key. Set JUDGE_API_KEY, DMX_API_KEY, or OPENAI_API_KEY.")
+        raise RuntimeError("Missing judge API key. Set JUDGE_API_KEY.")
 
-    model = os.getenv("JUDGE_MODEL", "o3-mini")
     max_tokens = _env_int("JUDGE_MAX_TOKENS", 1024)
     timeout_s = _env_int("JUDGE_TIMEOUT", 120)
     retries = _env_int("JUDGE_RETRIES", 3)
@@ -209,7 +211,7 @@ async def _call_llm_judge(prompt: str) -> dict[str, Any]:
     session = _get_session(timeout_s)
     for attempt in range(1, retries + 1):
         try:
-            async with session.post(url, headers=headers, json=payload) as resp:
+            async with session.post(url, headers=headers, json=payload, allow_redirects=False) as resp:
                 data = await resp.json(content_type=None)
                 if resp.status == 200:
                     choices = data.get("choices") or []
@@ -220,9 +222,9 @@ async def _call_llm_judge(prompt: str) -> dict[str, Any]:
                         "http_status": resp.status,
                         "attempts": attempt,
                     }
-                last_error = json.dumps(data, ensure_ascii=False)[:1000]
+                last_error = f"Judge API returned HTTP {resp.status}"
         except Exception as exc:
-            last_error = f"{type(exc).__name__}: {exc}"
+            last_error = f"Judge request failed: {type(exc).__name__}"
 
         if attempt < retries:
             await asyncio.sleep(min(2**attempt, 20))
